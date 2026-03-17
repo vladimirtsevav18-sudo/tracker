@@ -35,6 +35,7 @@ display:flex;
 align-items:center;
 padding:8px 0;
 border-bottom:1px solid #eee;
+font-size:15px;
 }
 
 .task:last-child{border:none;}
@@ -45,7 +46,7 @@ height:20px;
 margin-right:10px;
 }
 
-select,input{
+input{
 width:100%;
 padding:10px;
 border-radius:8px;
@@ -62,6 +63,7 @@ color:white;
 border:none;
 border-radius:10px;
 font-size:16px;
+margin-top:5px;
 }
 
 .row{
@@ -75,12 +77,19 @@ gap:8px;
 height:8px;
 background:#eee;
 border-radius:5px;
+overflow:hidden;
 }
 
 .bar{
 height:8px;
 background:#7fa37f;
 width:0%;
+}
+
+.history{
+font-size:13px;
+margin-top:10px;
+color:#666;
 }
 
 </style>
@@ -92,7 +101,7 @@ width:0%;
 <h1>Мой режим</h1>
 
 <div class="section">
-<h3>Выбери день</h3>
+<h3>Тип дня</h3>
 
 <select id="daySelect" onchange="loadTasks()">
 <option value="weekday">Будний день</option>
@@ -103,9 +112,12 @@ width:0%;
 
 <div class="section">
 <h3>Вес</h3>
+
 <input id="weight" type="number" placeholder="кг">
+
 <button onclick="saveWeight()">Сохранить</button>
-<div id="history"></div>
+
+<div class="history" id="history"></div>
 </div>
 
 <div class="section">
@@ -125,6 +137,7 @@ width:0%;
 
 <div class="section">
 <h3>Шаги</h3>
+
 <div id="stepsText">0 / 10000</div>
 
 <div class="row">
@@ -132,12 +145,15 @@ width:0%;
 <button onclick="steps-=500;update()">-500</button>
 </div>
 
-<div class="progress"><div class="bar" id="stepsBar"></div></div>
+<div class="progress">
+<div class="bar" id="stepsBar"></div>
+</div>
 
 </div>
 
 <div class="section">
 <h3>Вода</h3>
+
 <div id="waterText">0 / 2000</div>
 
 <div class="row">
@@ -145,7 +161,9 @@ width:0%;
 <button onclick="water-=100;update()">-100</button>
 </div>
 
-<div class="progress"><div class="bar" id="waterBar"></div></div>
+<div class="progress">
+<div class="bar" id="waterBar"></div>
+</div>
 
 </div>
 
@@ -159,23 +177,87 @@ let steps=0
 let water=0
 
 const weekday={
-morning:["Вода","Железо","Уход","Зубы","Вакуум","100 прыжков","Торговля"],
-day:["Спорт","Завтрак","Витамин D","Омега","Йод","Работа","Обед","10 000 шагов"],
-evening:["Казеин","Коллаген","Магний","Сон"]
+
+morning:[
+"Горячая вода",
+"Железо + витамин C",
+"Уход за лицом",
+"Зубы",
+"Вакуум живота",
+"100 прыжков",
+"Торговля",
+"Одежда детям",
+"Завтрак детям",
+"Витамины детям",
+"Лекарство Тимуру"
+],
+
+day:[
+"Спорт 9:00–10:00",
+"Душ + уход",
+"Завтрак 10:00",
+"Витамин D",
+"Омега",
+"Йод",
+"Саше от отеков",
+"Флуоксетин",
+"Работа 11–13",
+"Обед 13:00",
+"Псиллиум",
+"Берберин",
+"Посуда",
+"Стирка",
+"Работа 14–17",
+"10 000 шагов"
+],
+
+evening:[
+"Казеин 18:30–19:00",
+"Коллаген + витамин C",
+"Магний",
+"Подготовка вещей",
+"План на завтра",
+"Сон 22:00"
+]
+
 }
 
 const weekend={
-morning:["Вода","Железо","Уход","Вакуум"],
-day:["Завтрак","Прогулка","Шаги"],
-evening:["Казеин","Коллаген","Сон"]
+
+morning:[
+"Горячая вода",
+"Железо",
+"Уход",
+"Вакуум",
+"Лёгкая активность"
+],
+
+day:[
+"Завтрак",
+"Прогулка",
+"10 000 шагов",
+"Семья / отдых"
+],
+
+evening:[
+"Казеин",
+"Коллаген",
+"Магний",
+"Сон"
+]
+
 }
 
 function render(list,id){
+
 let el=document.getElementById(id)
+
 el.innerHTML=""
+
 list.forEach(t=>{
 el.innerHTML+=`<div class="task"><input type="checkbox">${t}</div>`
 })
+
 }
 
 function loadTasks(){
@@ -206,19 +288,31 @@ document.getElementById("waterBar").style.width=(water/20)+"%"
 }
 
 function resetDay(){
+
 steps=0
 water=0
 update()
+
 document.querySelectorAll("input[type=checkbox]").forEach(c=>c.checked=false)
+
 }
 
 function saveWeight(){
+
 let w=document.getElementById("weight").value
+
 if(!w)return
+
 let h=JSON.parse(localStorage.getItem("weights")||"[]")
-h.push(new Date().toLocaleDateString()+" — "+w+" кг")
+
+let d=new Date().toLocaleDateString()
+
+h.push(d+" — "+w+" кг")
+
 localStorage.setItem("weights",JSON.stringify(h))
+
 document.getElementById("history").innerHTML=h.join("<br>")
+
 }
 
 loadTasks()

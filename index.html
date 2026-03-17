@@ -1,364 +1,88 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Life Tracker</title>
+<title>Мой трекер</title>
 
 <style>
-
-body{
-font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
-background:#f4efe9;
-padding:20px;
-color:#3b2f27;
-}
-
-h1{
-text-align:center;
-}
-
-.section{
-background:white;
-padding:15px;
-border-radius:12px;
-margin-bottom:15px;
-box-shadow:0 4px 14px rgba(0,0,0,.08);
-}
-
-.task{
-margin:6px 0;
-}
-
-button{
-padding:8px 12px;
-background:#b59374;
-border:none;
-color:white;
-border-radius:8px;
-margin:4px;
-}
-
-.progress{
-height:8px;
-background:#ddd;
-border-radius:5px;
-margin-top:6px;
-}
-
-.bar{
-height:8px;
-background:#7fa37f;
-border-radius:5px;
-width:0%;
-}
-
+body{font-family:Arial;background:#f4efe9;padding:20px}
+.section{background:white;padding:15px;border-radius:10px;margin-bottom:10px}
+.task{margin:5px 0}
+button{padding:6px 10px;background:#b59374;color:white;border:none;border-radius:6px}
 </style>
-
 </head>
 
 <body>
 
-<h1>Мой режим</h1>
+<h2>Мой день</h2>
 
 <div class="section">
-
-Дата
-
-<input type="date" id="date">
-
-<button onclick="resetDay()">Сбросить день</button>
-
-</div>
-
-<div class="section">
-
 <h3>Вес</h3>
-
-<input type="number" id="weight" placeholder="кг">
-
-<button onclick="saveWeight()">Сохранить</button>
-
-<div id="weightHistory"></div>
-
+<input id="weight" type="number" placeholder="кг">
+<button onclick="saveWeight()">сохранить</button>
+<div id="history"></div>
 </div>
 
 <div class="section">
-
 <h3>Утро</h3>
-
-<div id="morning"></div>
-
+<label class="task"><input type="checkbox"> вода</label>
+<label class="task"><input type="checkbox"> железо</label>
+<label class="task"><input type="checkbox"> уход</label>
+<label class="task"><input type="checkbox"> вакуум</label>
+<label class="task"><input type="checkbox"> 100 прыжков</label>
+<label class="task"><input type="checkbox"> торговля</label>
 </div>
 
 <div class="section">
-
 <h3>День</h3>
-
-<div id="day"></div>
-
+<label class="task"><input type="checkbox"> спорт</label>
+<label class="task"><input type="checkbox"> завтрак</label>
+<label class="task"><input type="checkbox"> витамин D</label>
+<label class="task"><input type="checkbox"> омега</label>
+<label class="task"><input type="checkbox"> йод</label>
+<label class="task"><input type="checkbox"> работа</label>
+<label class="task"><input type="checkbox"> обед</label>
 </div>
 
 <div class="section">
-
-<h3>Вечер</h3>
-
-<div id="evening"></div>
-
-</div>
-
-<div class="section">
-
 <h3>Шаги</h3>
-
-<div id="stepsText">0 / 10000</div>
-
-<button onclick="addSteps()">+1000</button>
-
-<button onclick="removeSteps()">-500</button>
-
-<div class="progress">
-<div class="bar" id="stepsBar"></div>
-</div>
-
+<span id="steps">0</span>/10000
+<br><br>
+<button onclick="steps+=1000;update()">+1000</button>
 </div>
 
 <div class="section">
-
 <h3>Вода</h3>
-
-<div id="waterText">0 / 2000</div>
-
-<button onclick="addWater()">+300</button>
-
-<button onclick="removeWater()">-100</button>
-
-<div class="progress">
-<div class="bar" id="waterBar"></div>
+<span id="water">0</span>/2000
+<br><br>
+<button onclick="water+=300;update()">+300</button>
 </div>
 
+<div class="section">
+<h3>Вечер</h3>
+<label class="task"><input type="checkbox"> казеин</label>
+<label class="task"><input type="checkbox"> коллаген</label>
+<label class="task"><input type="checkbox"> магний</label>
+<label class="task"><input type="checkbox"> сон</label>
 </div>
 
 <script>
-
 let steps=0
 let water=0
 
-const weekdayTasks={
-morning:[
-"Горячая вода",
-"Железо + витамин C",
-"Уход за лицом",
-"Зубы",
-"Вакуум",
-"100 прыжков",
-"Торговля",
-"Одежда детям",
-"Завтрак детям",
-"Витамины детям",
-"Лекарство Тимуру"
-],
-
-day:[
-"Спорт",
-"Завтрак",
-"Витамин D",
-"Омега",
-"Йод",
-"Саше от отеков",
-"Флуоксетин",
-"Работа 11-13",
-"Псиллиум",
-"Обед",
-"Берберин",
-"Посуда",
-"Стирка",
-"Работа 14-17",
-"10000 шагов"
-],
-
-evening:[
-"Казеин",
-"Коллаген + витамин C",
-"Магний",
-"Подготовка вещей",
-"Сон"
-]
-}
-
-const weekendTasks={
-morning:[
-"Горячая вода",
-"Железо",
-"Уход",
-"Вакуум",
-"Торговля"
-],
-
-day:[
-"Завтрак",
-"Прогулка",
-"10000 шагов"
-],
-
-evening:[
-"Казеин",
-"Коллаген",
-"Магний",
-"Сон"
-]
-}
-
-function createList(id,list){
-
-let el=document.getElementById(id)
-
-el.innerHTML=""
-
-list.forEach(t=>{
-
-let div=document.createElement("div")
-
-div.className="task"
-
-div.innerHTML=`<label><input type="checkbox"> ${t}</label>`
-
-el.appendChild(div)
-
-})
-
-}
-
-function loadTasks(){
-
-let value=document.getElementById("date").value
-
-if(!value)return
-
-let parts=value.split("-")
-
-let date=new Date(parts[0],parts[1]-1,parts[2])
-
-let day=date.getDay()
-
-let data=(day==0||day==6)?weekendTasks:weekdayTasks
-
-createList("morning",data.morning)
-createList("day",data.day)
-createList("evening",data.evening)
-
-}
-
-function updateBars(){
-
-document.getElementById("stepsText").innerText=steps+" / 10000"
-
-document.getElementById("waterText").innerText=water+" / 2000"
-
-document.getElementById("stepsBar").style.width=(steps/100)+"%"
-
-document.getElementById("waterBar").style.width=(water/20)+"%"
-
-}
-
-function addSteps(){
-
-steps+=1000
-
-if(steps>10000)steps=10000
-
-updateBars()
-
-}
-
-function removeSteps(){
-
-steps-=500
-
-if(steps<0)steps=0
-
-updateBars()
-
-}
-
-function addWater(){
-
-water+=300
-
-if(water>2000)water=2000
-
-updateBars()
-
-}
-
-function removeWater(){
-
-water-=100
-
-if(water<0)water=0
-
-updateBars()
-
-}
-
-function resetDay(){
-
-steps=0
-
-water=0
-
-updateBars()
-
-document.querySelectorAll("input[type=checkbox]").forEach(c=>c.checked=false)
-
+function update(){
+document.getElementById("steps").innerText=steps
+document.getElementById("water").innerText=water
 }
 
 function saveWeight(){
-
 let w=document.getElementById("weight").value
-
-if(!w)return
-
-let history=JSON.parse(localStorage.getItem("weights")||"[]")
-
-let d=new Date().toLocaleDateString()
-
-history.push(d+" — "+w+" кг")
-
-localStorage.setItem("weights",JSON.stringify(history))
-
-showWeights()
-
+let h=JSON.parse(localStorage.getItem("w")||"[]")
+h.push(new Date().toLocaleDateString()+" "+w)
+localStorage.setItem("w",JSON.stringify(h))
+document.getElementById("history").innerHTML=h.join("<br>")
 }
-
-function showWeights(){
-
-let history=JSON.parse(localStorage.getItem("weights")||"[]")
-
-document.getElementById("weightHistory").innerHTML=history.join("<br>")
-
-}
-
-let today=new Date()
-
-let yyyy=today.getFullYear()
-
-let mm=String(today.getMonth()+1).padStart(2,"0")
-
-let dd=String(today.getDate()).padStart(2,"0")
-
-document.getElementById("date").value=`${yyyy}-${mm}-${dd}`
-
-loadTasks()
-
-showWeights()
-
-document.getElementById("date").addEventListener("change",loadTasks)
-
-updateBars()
-
 </script>
 
 </body>

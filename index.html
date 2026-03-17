@@ -1,88 +1,253 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Мой трекер</title>
+
+<title>Мой режим</title>
 
 <style>
-body{font-family:Arial;background:#f4efe9;padding:20px}
-.section{background:white;padding:15px;border-radius:10px;margin-bottom:10px}
-.task{margin:5px 0}
-button{padding:6px 10px;background:#b59374;color:white;border:none;border-radius:6px}
+
+body{
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
+background:#f4efe9;
+margin:0;
+padding:15px;
+color:#3b2f27;
+}
+
+h1{
+text-align:center;
+font-size:22px;
+margin-bottom:15px;
+}
+
+.section{
+background:white;
+border-radius:14px;
+padding:15px;
+margin-bottom:12px;
+box-shadow:0 6px 18px rgba(0,0,0,.08);
+}
+
+h3{
+margin:0 0 10px 0;
+font-size:16px;
+}
+
+.task{
+display:flex;
+align-items:center;
+padding:8px 0;
+border-bottom:1px solid #f0f0f0;
+font-size:15px;
+}
+
+.task:last-child{
+border-bottom:none;
+}
+
+input[type="checkbox"]{
+width:20px;
+height:20px;
+margin-right:10px;
+}
+
+input[type="number"]{
+width:100%;
+padding:10px;
+border-radius:8px;
+border:1px solid #ddd;
+font-size:16px;
+margin-bottom:8px;
+}
+
+button{
+width:100%;
+padding:12px;
+background:#b59374;
+color:white;
+border:none;
+border-radius:10px;
+font-size:16px;
+margin-top:5px;
+}
+
+.counter{
+text-align:center;
+font-size:18px;
+margin:10px 0;
+}
+
+.row{
+display:flex;
+gap:8px;
+}
+
+.row button{
+flex:1;
+}
+
+.progress{
+height:8px;
+background:#eee;
+border-radius:5px;
+overflow:hidden;
+}
+
+.bar{
+height:8px;
+background:#7fa37f;
+width:0%;
+}
+
+.history{
+font-size:13px;
+margin-top:10px;
+color:#666;
+}
+
 </style>
+
 </head>
 
 <body>
 
-<h2>Мой день</h2>
+<h1>Мой режим</h1>
 
 <div class="section">
 <h3>Вес</h3>
+
 <input id="weight" type="number" placeholder="кг">
-<button onclick="saveWeight()">сохранить</button>
-<div id="history"></div>
+
+<button onclick="saveWeight()">Сохранить вес</button>
+
+<div class="history" id="history"></div>
 </div>
 
 <div class="section">
 <h3>Утро</h3>
-<label class="task"><input type="checkbox"> вода</label>
-<label class="task"><input type="checkbox"> железо</label>
-<label class="task"><input type="checkbox"> уход</label>
-<label class="task"><input type="checkbox"> вакуум</label>
-<label class="task"><input type="checkbox"> 100 прыжков</label>
-<label class="task"><input type="checkbox"> торговля</label>
+
+<div class="task"><input type="checkbox">Горячая вода</div>
+<div class="task"><input type="checkbox">Железо</div>
+<div class="task"><input type="checkbox">Уход</div>
+<div class="task"><input type="checkbox">Вакуум</div>
+<div class="task"><input type="checkbox">100 прыжков</div>
+<div class="task"><input type="checkbox">Торговля</div>
+
 </div>
 
 <div class="section">
 <h3>День</h3>
-<label class="task"><input type="checkbox"> спорт</label>
-<label class="task"><input type="checkbox"> завтрак</label>
-<label class="task"><input type="checkbox"> витамин D</label>
-<label class="task"><input type="checkbox"> омега</label>
-<label class="task"><input type="checkbox"> йод</label>
-<label class="task"><input type="checkbox"> работа</label>
-<label class="task"><input type="checkbox"> обед</label>
+
+<div class="task"><input type="checkbox">Спорт</div>
+<div class="task"><input type="checkbox">Завтрак</div>
+<div class="task"><input type="checkbox">Витамин D</div>
+<div class="task"><input type="checkbox">Омега</div>
+<div class="task"><input type="checkbox">Йод</div>
+<div class="task"><input type="checkbox">Работа</div>
+<div class="task"><input type="checkbox">Обед</div>
+
 </div>
 
 <div class="section">
 <h3>Шаги</h3>
-<span id="steps">0</span>/10000
-<br><br>
+
+<div class="counter" id="stepsText">0 / 10000</div>
+
+<div class="row">
 <button onclick="steps+=1000;update()">+1000</button>
+<button onclick="steps-=500;update()">-500</button>
+</div>
+
+<div class="progress">
+<div class="bar" id="stepsBar"></div>
+</div>
+
 </div>
 
 <div class="section">
 <h3>Вода</h3>
-<span id="water">0</span>/2000
-<br><br>
+
+<div class="counter" id="waterText">0 / 2000</div>
+
+<div class="row">
 <button onclick="water+=300;update()">+300</button>
+<button onclick="water-=100;update()">-100</button>
+</div>
+
+<div class="progress">
+<div class="bar" id="waterBar"></div>
+</div>
+
 </div>
 
 <div class="section">
 <h3>Вечер</h3>
-<label class="task"><input type="checkbox"> казеин</label>
-<label class="task"><input type="checkbox"> коллаген</label>
-<label class="task"><input type="checkbox"> магний</label>
-<label class="task"><input type="checkbox"> сон</label>
+
+<div class="task"><input type="checkbox">Казеин</div>
+<div class="task"><input type="checkbox">Коллаген</div>
+<div class="task"><input type="checkbox">Магний</div>
+<div class="task"><input type="checkbox">Сон</div>
+
+</div>
+
+<div class="section">
+<button onclick="resetDay()">Сбросить день</button>
 </div>
 
 <script>
+
 let steps=0
 let water=0
 
 function update(){
-document.getElementById("steps").innerText=steps
-document.getElementById("water").innerText=water
+
+if(steps<0)steps=0
+if(steps>10000)steps=10000
+
+if(water<0)water=0
+if(water>2000)water=2000
+
+document.getElementById("stepsText").innerText=steps+" / 10000"
+document.getElementById("waterText").innerText=water+" / 2000"
+
+document.getElementById("stepsBar").style.width=(steps/100)+"%"
+document.getElementById("waterBar").style.width=(water/20)+"%"
+
+}
+
+function resetDay(){
+
+steps=0
+water=0
+update()
+
+document.querySelectorAll("input[type=checkbox]").forEach(c=>c.checked=false)
+
 }
 
 function saveWeight(){
+
 let w=document.getElementById("weight").value
-let h=JSON.parse(localStorage.getItem("w")||"[]")
-h.push(new Date().toLocaleDateString()+" "+w)
-localStorage.setItem("w",JSON.stringify(h))
+
+if(!w)return
+
+let h=JSON.parse(localStorage.getItem("weights")||"[]")
+
+let d=new Date().toLocaleDateString()
+
+h.push(d+" — "+w+" кг")
+
+localStorage.setItem("weights",JSON.stringify(h))
+
 document.getElementById("history").innerHTML=h.join("<br>")
+
 }
+
+update()
+
 </script>
 
 </body>
